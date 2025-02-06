@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin-dto';
 // import { SigninDto } from './dto/signin-dto';
 
-@Controller()
+@Controller('')
 export class AuthController {
   constructor(private readonly userService: AuthService) {}
   @Get('/register')
