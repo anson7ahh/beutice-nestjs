@@ -51,20 +51,27 @@ export class AuthService {
       throw new Error(`User registration failed: ${error.message || error}`);
     }
   }
-  async signin(
-    signinDto: SigninDto,
-  ): Promise<{ message: string; statusCode: number; accessToken?: string }> {
+  async signin(signinDto: SigninDto): Promise<{
+    message: string;
+    statusCode: number;
+    token?: string;
+    fullName?: string;
+    phoneNumber?: string;
+    email?: string;
+  }> {
     try {
-      // Check if the user already exists
+      console.log(1);
       const existingUser = await this.userModel
         .findOne({ email: signinDto.email })
         .exec();
+      console.log('existingUser', existingUser);
       if (!existingUser) {
         return {
           message: 'account wrong',
           statusCode: 404,
         };
       }
+
       const isPasswordValid = await bcrypt.compare(
         signinDto.password,
         existingUser.password,
@@ -83,7 +90,10 @@ export class AuthService {
       return {
         message: 'User login successfully',
         statusCode: 201,
-        accessToken: accessToken,
+        token: accessToken,
+        fullName: existingUser.fullName,
+        phoneNumber: existingUser.phoneNumber,
+        email: existingUser.email,
       };
     } catch (error) {
       console.error('Error during user registration:', error);
