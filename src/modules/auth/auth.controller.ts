@@ -7,7 +7,7 @@ import { SigninDto } from './dto/signin-dto';
 @Controller('')
 export class AuthController {
   constructor(private readonly userService: AuthService) {}
-  @Get('/register')
+  @Get('/')
   index() {
     return 'hello';
   }
