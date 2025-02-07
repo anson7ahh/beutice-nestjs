@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: . # ✅ Chỉ định thư mục build
+      dockerfile: Dockerfile # ✅ Đảm bảo Dockerfile đúng tên
+    ports:
+      - '3080:3080' # ✅ Dùng PORT đúng với biến môi trường
+    depends_on:
+      - mongo
+    environment:
+      - PORT=3080
+      - MONGODB_URL=mongodb+srv://sonnabhsoft:UpmqCh3zidBb5pf3@cluster0.hcftn.mongodb.net/beautice
+      - SECRET_KEY=secret_key
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ['yarn', 'start'] # ✅ Chạy NestJS khi container khởi động
+
+  mongo:
+    image: mongo:6
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_DATABASE: mydatabase
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+volumes:
+  mongo_data:
