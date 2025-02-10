@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { Model } from 'mongoose';
-import { User, UserDocument } from 'src/config/mongo.config';
-import { InjectModel } from '@nestjs/mongoose';
+// import { faker } from '@faker-js/faker';
 import { RegisterDto } from './dto/register-dto';
 import { SigninDto } from './dto/signin-dto';
 import { JwtService } from '@nestjs/jwt';
+import { AuthRepository } from './auth.repository';
+import { User } from './model/user.model';
+import { PostDto } from './dto/post.dto';
+import { PostDocument } from './model/post.model';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private auhtRepository: AuthRepository,
     private jwtService: JwtService,
   ) {}
 
@@ -19,9 +21,9 @@ export class AuthService {
   ): Promise<{ message: string; statusCode: number }> {
     try {
       // Check if the user already exists
-      const existingUser = await this.userModel
-        .findOne({ email: registerDto.email })
-        .exec();
+      const existingUser = await this.auhtRepository.findByEmail(
+        registerDto.email,
+      );
       if (existingUser) {
         return {
           message: 'Account already exists',
@@ -33,15 +35,13 @@ export class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(registerDto.password, salt);
 
-      // Create a new user instance
-      const createdUser = new this.userModel({
+      const newUser = await this.auhtRepository.createUser({
         ...registerDto,
         password: hashedPassword,
       });
-
-      // Save the new user to the database
-      await createdUser.save();
-
+      if (!newUser) {
+        return { message: 'create false', statusCode: 400 };
+      }
       return {
         message: 'User registered successfully',
         statusCode: 201,
@@ -61,9 +61,10 @@ export class AuthService {
   }> {
     try {
       console.log(1);
-      const existingUser = await this.userModel
-        .findOne({ email: signinDto.email })
-        .exec();
+      const existingUser = await this.auhtRepository.findByEmail(
+        signinDto.email,
+      );
+
       console.log('existingUser', existingUser);
       if (!existingUser) {
         return {
@@ -99,5 +100,66 @@ export class AuthService {
       console.error('Error during user registration:', error);
       throw new Error(`User registration failed: ${error.message || error}`);
     }
+  }
+
+  // async createFakeUsers(count: number) {
+  //   const users = [];
+
+  //   for (let i = 0; i < count; i++) {
+  //     users.push({
+  //       id: faker.string.uuid(),
+  //       fullName: faker.person.fullName(),
+  //       password: faker.internet.password(),
+  //       email: faker.internet.email(),
+  //       phoneNumber: faker.phone.number({ style: 'international' }),
+  //     });
+  //   }
+  //   await this.auhtRepository.saveUsers(users);
+  //   return { message: `Đã tạo ${count} user mẫu`, statusCode: 201 };
+  // }
+
+  async getRecords({
+    page = 1,
+    limit = 3,
+  }): Promise<{ records: User[]; totalPage: number }> {
+    const offset = (page - 1) * limit;
+
+    const totalRecords = await this.auhtRepository.countDocuments();
+
+    const totalPage = Math.ceil(totalRecords / limit);
+
+    const records = await this.auhtRepository.find({ limit, offset });
+    return { records, totalPage };
+  }
+
+  async createPost(
+    postDto: PostDto,
+  ): Promise<{ message: string; statusCode: number }> {
+    try {
+      const newPost = await this.auhtRepository.createPost(postDto);
+      if (!newPost) {
+        return { message: 'create false', statusCode: 400 };
+      }
+      return {
+        message: 'Post created successfully',
+        statusCode: 201,
+      };
+    } catch (error) {
+      console.error('Error during user registration:', error);
+      throw new Error(`User registration failed: ${error.message || error}`);
+    }
+  }
+  async getRecordsPosts({
+    page = 1,
+    limit = 3,
+  }): Promise<{ records: PostDocument[]; totalPage: number }> {
+    const offset = (page - 1) * limit;
+
+    const totalRecords = await this.auhtRepository.countPost();
+
+    const totalPage = Math.ceil(totalRecords / limit);
+
+    const records = await this.auhtRepository.findPost({ limit, offset });
+    return { records, totalPage };
   }
 }

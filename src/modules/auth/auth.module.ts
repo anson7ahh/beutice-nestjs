@@ -1,13 +1,19 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/config/mongo.config';
 import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from './model/user.model';
+import { AuthRepository } from './auth.repository';
+import { Post, PostSchema } from './model/post.model';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Post.name, schema: PostSchema },
+    ]),
+
     JwtModule.register({
       global: true,
       secret: `${process.env.SECRET_KEY}`,
@@ -15,7 +21,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
-  exports: [AuthService],
+  providers: [AuthService, AuthRepository],
+  exports: [AuthService, AuthRepository],
 })
 export class AuthModule {}
