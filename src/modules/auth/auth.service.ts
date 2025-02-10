@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-// import { faker } from '@faker-js/faker';
 import { RegisterDto } from './dto/register-dto';
 import { SigninDto } from './dto/signin-dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthRepository } from './auth.repository';
-import { User } from './model/user.model';
-// import { PostDto } from './dto/post.dto';
 import { PostDocument } from './model/post.model';
 
 @Injectable()
@@ -60,7 +57,6 @@ export class AuthService {
     email?: string;
   }> {
     try {
-      console.log(1);
       const existingUser = await this.auhtRepository.findByEmail(
         signinDto.email,
       );
@@ -117,20 +113,6 @@ export class AuthService {
   //   await this.auhtRepository.saveUsers(users);
   //   return { message: `Đã tạo ${count} user mẫu`, statusCode: 201 };
   // }
-
-  async getRecords({
-    page = 1,
-    limit = 3,
-  }): Promise<{ records: User[]; totalPage: number }> {
-    const offset = (page - 1) * limit;
-
-    const totalRecords = await this.auhtRepository.countDocuments();
-
-    const totalPage = Math.ceil(totalRecords / limit);
-
-    const records = await this.auhtRepository.find({ limit, offset });
-    return { records, totalPage };
-  }
 
   // async createPost(
   //   postDto: PostDto,

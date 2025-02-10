@@ -9,7 +9,7 @@ import {
 import { RegisterDto } from './dto/register-dto';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin-dto';
-import { User } from './model/user.model';
+
 // import { PostDto } from './dto/post.dto';
 import { PostDocument } from './model/post.model';
 
@@ -32,17 +32,6 @@ export class AuthController {
   // async getFakeUsers(@Query('count') count: number) {
   //   return this.authService.createFakeUsers(Number(count) || 10);
   // }
-
-  @Get('/records')
-  async getRecords(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-  ): Promise<{ records: User[]; totalPage: number }> {
-    if (page < 1 || limit < 1) {
-      throw new BadRequestException('Invalid page or limit');
-    }
-    return this.authService.getRecords({ page, limit });
-  }
 
   @Get('/recordsPost')
   async getRecordsPost(
