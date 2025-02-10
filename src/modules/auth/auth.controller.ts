@@ -10,7 +10,7 @@ import { RegisterDto } from './dto/register-dto';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin-dto';
 import { User } from './model/user.model';
-import { PostDto } from './dto/post.dto';
+// import { PostDto } from './dto/post.dto';
 import { PostDocument } from './model/post.model';
 
 @Controller('auth')
@@ -55,8 +55,8 @@ export class AuthController {
     return this.authService.getRecordsPosts({ page, limit });
   }
 
-  @Post('post')
-  async createNewPost(@Body() postDto: PostDto) {
-    return this.authService.createPost(postDto);
-  }
+  // @Post('post')
+  // async createNewPost(@Body() postDto: PostDto) {
+  //   return this.authService.createPost(postDto);
+  // }
 }

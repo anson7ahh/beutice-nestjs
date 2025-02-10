@@ -20,12 +20,12 @@ export class AuthRepository {
 
     return user.save();
   }
-  async createPost(data: Partial<PostDocument>): Promise<PostDocument> {
-    const post = new this.postModel({
-      ...data,
-    });
-    return post.save();
-  }
+  // async createPost(data: Partial<PostDocument>): Promise<PostDocument> {
+  //   const post = new this.postModel({
+  //     ...data,
+  //   });
+  //   return post.save();
+  // }
   async countDocuments(): Promise<number> {
     return this.userModel.countDocuments().exec();
   }

@@ -6,7 +6,7 @@ import { SigninDto } from './dto/signin-dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthRepository } from './auth.repository';
 import { User } from './model/user.model';
-import { PostDto } from './dto/post.dto';
+// import { PostDto } from './dto/post.dto';
 import { PostDocument } from './model/post.model';
 
 @Injectable()
@@ -132,23 +132,23 @@ export class AuthService {
     return { records, totalPage };
   }
 
-  async createPost(
-    postDto: PostDto,
-  ): Promise<{ message: string; statusCode: number }> {
-    try {
-      const newPost = await this.auhtRepository.createPost(postDto);
-      if (!newPost) {
-        return { message: 'create false', statusCode: 400 };
-      }
-      return {
-        message: 'Post created successfully',
-        statusCode: 201,
-      };
-    } catch (error) {
-      console.error('Error during user registration:', error);
-      throw new Error(`User registration failed: ${error.message || error}`);
-    }
-  }
+  // async createPost(
+  //   postDto: PostDto,
+  // ): Promise<{ message: string; statusCode: number }> {
+  //   try {
+  //     const newPost = await this.auhtRepository.createPost(postDto);
+  //     if (!newPost) {
+  //       return { message: 'create false', statusCode: 400 };
+  //     }
+  //     return {
+  //       message: 'Post created successfully',
+  //       statusCode: 201,
+  //     };
+  //   } catch (error) {
+  //     console.error('Error during user registration:', error);
+  //     throw new Error(`User registration failed: ${error.message || error}`);
+  //   }
+  // }
   async getRecordsPosts({
     page = 1,
     limit = 3,
